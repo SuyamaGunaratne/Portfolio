@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suyama Gunaratne - Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    .progress-ring__circle {
+      transition: stroke-dasharray 0.5s ease;
+      transform: rotate(-90deg);
+      transform-origin: center;
+    }
+    body {
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
+    }
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(17, 24, 39, 0.75);
+      z-index: 0;
+    }
+    #root {
+      position: relative;
+      z-index: 1;
+    }
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white font-sans">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const Navbar = () => {
+      const [isOpen, setIsOpen] = useState(false);
+
+      return (
+        <nav class="fixed top-0 w-full glass-effect z-50 shadow-xl">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+              <div class="flex">
+                <div class="flex-shrink-0 flex items-center">
+                  <span class="text-3xl font-extrabold text-teal-400 tracking-tight">Suyama Gunaratne</span>
+                </div>
+              </div>
+              <div class="hidden md:flex items-center space-x-8">
+                {['about', 'skills', 'education', 'projects', 'extracurricular', 'contact'].map((section) => (
+                  <a
+                    key={section}
+                    href={`#${section}`}
+                    class="text-gray-200 hover:text-teal-400 transition duration-300 font-medium"
+                  >
+                    {section.charAt(0).toUpperCase() + section.slice(1)}
+                  </a>
+                ))}
+              </div>
+              <div class="md:hidden flex items-center">
+                <button
+                  onClick={() => setIsOpen(!isOpen)}
+                  class="text-gray-200 hover:text-teal-400 focus:outline-none"
+                >
+                  <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-7 6h7"}
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          {isOpen && (
+            <div class="md:hidden glass-effect">
+              <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                {['about', 'skills', 'education', 'projects', 'extracurricular', 'contact'].map((section) => (
+                  <a
+                    key={section}
+                    href={`#${section}`}
+                    class="block text-gray-200 hover:text-teal-400 transition duration-300"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {section.charAt(0).toUpperCase() + section.slice(1)}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </nav>
+      );
+    };
+
+    const Section = ({ id, title, children }) => {
+      return (
+        <section
+          id={id}
+          class={`px-4 md:px-8 relative ${id === 'about' ? 'pt-32 pb-16' : 'py-16'} ${id !== 'about' ? 'mt-16' : ''}`}
+        >
+          <div class="max-w-7xl mx-auto">
+            <h2 class="text-4xl md:text-5xl font-bold mb-12 text-teal-400 inline-block bg-gray-800/50 px-8 py-4 rounded-xl shadow-lg">
+              {title}
+            </h2>
+            <div>{children}</div>
+          </div>
+        </section>
+      );
+    };
+
+    const CircularProgressBar = ({ skill, percentage }) => {
+      const radius = 40;
+      const circumference = 2 * Math.PI * radius;
+      const strokeDasharray = `${(percentage / 100) * circumference} ${circumference}`;
+
+      return (
+        <div class="flex flex-col items-center group">
+          <svg class="w-24 h-24 transform group-hover:scale-110 transition-transform duration-300">
+            <circle
+              cx="50%"
+              cy="50%"
+              r={radius}
+              fill="none"
+              stroke="#374151"
+              stroke-width="8"
+            />
+            <circle
+              className="progress-ring__circle"
+              cx="50%"
+              cy="50%"
+              r={radius}
+              fill="none"
+              stroke="#2dd4bf"
+              stroke-width="8"
+              stroke-dasharray={strokeDasharray}
+              stroke-linecap="round"
+            />
+            <text
+              x="50%"
+              y="50%"
+              text-anchor="middle"
+              dy=".3em"
+              class="text-teal-400 font-bold"
+              font-size="14"
+            >
+              {`${percentage}%`}
+            </text>
+          </svg>
+          <span class="mt-2 text-teal-400 font-semibold">{skill}</span>
+        </div>
+      );
+    };
+
+    const App = () => {
+      const skillsData = [
+        { skill: "Figma", percentage: 88 },
+        { skill: "Android Studio", percentage: 70 },
+        { skill: "GitHub", percentage: 80 },
+      ];
+
+      const language = [
+        { lan: "Java", percentage: 85 },
+        { lan: "JavaScript", percentage: 90 },
+        { lan: "HTML", percentage: 95 },
+        { lan: "CSS", percentage: 90 },
+        { lan: "React", percentage: 80 },
+        { lan: "Node.js", percentage: 70 },
+        { lan: "Python", percentage: 85 },
+        { lan: "C", percentage: 80 },
+        { lan: "C++", percentage: 80 },
+        { lan: "PHP", percentage: 70 },
+      ];
+
+      return (
+        <div>
+          <Navbar />
+          <Section id="about" title="About Me">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+              <div class="md:w-1/2">
+                <p class="text-gray-300 text-lg leading-relaxed">
+                  I'm a dedicated Full Stack Developer and Software Engineer Intern with a passion for creating innovative
+                  and user-friendly web solutions. As a student, I continuously refine my skills, tackling both front-end
+                  and back-end challenges. My goal is to build impactful applications that combine functionality with
+                  exceptional design, always eager to learn and contribute to the tech community.
+                </p>
+                <a
+                  href="/resume.pdf"
+                  download
+                  class="mt-6 inline-block bg-teal-500 hover:bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300"
+                >
+                  Download Resume
+                </a>
+              </div>
+              <div class="md:w-1/2 flex justify-center">
+                <img
+                  src="image/image02.jpg"
+                  alt="Your Photo"
+                  class="rounded-2xl w-64 h-80 object-cover shadow-2xl border-4 border-teal-400/50 "
+                />
+              </div>
+            </div>
+          </Section>
+          <Section id="skills" title="Skills">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div class="glass-effect p-8 rounded-xl shadow-lg">
+                <h3 class="text-xl font-semibold text-teal-400 mb-6">Tools</h3>
+                <div class="grid grid-cols-3 gap-6">
+                  {skillsData.map((skill, index) => (
+                    <CircularProgressBar key={index} skill={skill.skill} percentage={skill.percentage} />
+                  ))}
+                </div>
+              </div>
+              <div class="glass-effect p-8 rounded-xl shadow-lg">
+                <h3 class="text-xl font-semibold text-teal-400 mb-6">Languages</h3>
+                <div class="grid grid-cols-4 gap-6">
+                  {language.map((lan, index) => (
+                    <CircularProgressBar key={index} skill={lan.lan} percentage={lan.percentage} />
+                  ))}
+                </div>
+              </div>
+              <div class="glass-effect p-8 rounded-xl shadow-lg md:col-span-2">
+                <h3 class="text-xl font-semibold text-teal-400 mb-6">Soft Skills</h3>
+                <div class="grid grid-cols-2 gap-3 text-gray-300">
+                  {[
+                    "Consistency",
+                    "Team Work",
+                    "Willingness to Learn",
+                    "Active Listening",
+                    "Conflict Resolution",
+                    "Team Handling",
+                  ].map((skill) => (
+                    <div key={skill} class="flex items-center">
+                      <span class="w-2 h-2 bg-teal-400 rounded-full mr-3"></span>
+                      {skill}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Section>
+          <Section id="education" title="Education">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div class="glass-effect p-8 rounded-xl shadow-lg">
+                <h3 class="text-xl font-semibold text-teal-400 mb-4">Prince of Wales' College</h3>
+                <ul class="text-gray-300 space-y-2">
+                  <li class="flex items-center">
+                    <span class="w-2 h-2 bg-teal-400 rounded-full mr-3"></span>GCE O/L 2018
+                  </li>
+                  <li class="flex items-center">
+                    <span class="w-2 h-2 bg-teal-400 rounded-full mr-3"></span>GCE A/L 2021 (2022)
+                  </li>
+                </ul>
+              </div>
+              <div class="glass-effect p-8 rounded-xl shadow-lg">
+                <h3 class="text-xl font-semibold text-teal-400 mb-4">Sri Lanka Institute of Information Technology</h3>
+                <p class="text-gray-300">2023 - Present</p>
+                <ul class="text-gray-300 space-y-2 mt-2">
+                  <li class="flex items-center">
+                    <span class="w-2 h-2 bg-teal-400 rounded-full mr-3"></span>BSc (Hons) in Information Technology
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </Section>
+          <Section id="projects" title="Projects">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+              {[
+                {
+                  title: "Food Ordering & Delivery System (REACT, Node.js)",
+                  description: "Food ordering and delivery platform similar to PickMe Food, UberEats, which allows customers to order food from multiple restaurants and get deliveries efficiently",
+                  link: "#",
+                  status: "In Progress",
+                },
+                {
+                  title: "E-Learning Platform (EduConnect - REACT, Node.js)",
+                  description: "A full-stack application for online learning Management System.",
+                  link: "#",
+                  status: "Completed",
+                },
+                {
+                  title: "Vehicle Rental System (JAVA, MySql) ",
+                  description: "User can rental there vehicles, hire a vehicle, and trak the rented vehicles their own.",
+                  link: "#",
+                  status: "Completed",
+                },
+                {
+                  title: "Budget Calculator (Mobile Application - Kotlin)",
+                  description: "Use to Calculate Monthly budget to the user and maintain their budget through this app. Developed using Android Studio.",
+                  link: "#",
+                  status: "Completed",
+                },
+              ].map((project, index) => (
+                <div
+                  key={index}
+                  class="glass-effect p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300"
+                >
+                  <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-L font-semibold text-teal-300">{project.title}</h3>
+                    <span
+                      class={`text-sm font-medium px-4 py-1 rounded-full ${
+                        project.status === "Completed"
+                          ? "bg-green-500/20 text-green-400"
+                          : "bg-yellow-500/20 text-yellow-400"
+                      }`}
+                    >
+                      {project.status}
+                    </span>
+                  </div>
+                  <p class="text-gray-300 mb-4 text-L">{project.description}</p>
+                  <a href={project.link} class="text-teal-400 hover:text-teal-300 transition-colors">
+                    View Project
+                  </a>
+                </div>
+              ))}
+            </div>
+          </Section>
+          <Section id="extracurricular" title="Extra Curricular Activities">
+            <div class="glass-effect p-6 rounded-xl shadow-lg">
+              <ul class="space-y-4">
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-teal-400 rounded-full mr-4"></span>
+                  <span class="text-xl font-semibold text-teal-400">U-23 National No: 03 in 800m (Junior National Athletic Championship 2023)</span>
+                </li>
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-teal-400 rounded-full mr-4"></span>
+                  <span class="text-xl font-semibold text-teal-400">2 time Colors man in the University (2023/2024)</span>
+                </li>
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-teal-400 rounded-full mr-4"></span>
+                  <span class="text-xl font-semibold text-teal-400">Certificate leveler in Sports Science and Management IHRA (UOC)</span>
+                </li>
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-teal-400 rounded-full mr-4"></span>
+                  <span class="text-xl font-semibold text-teal-400">U-20 National No 08 in 800m (Senior & Junior National Trials 2021)</span>
+                </li>
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-teal-400 rounded-full mr-4"></span>
+                  <span class="text-xl font-semibold text-teal-400">U-20 No 06 in 800m (Selection Trials for World Junior Athletic Championship 2021)</span>
+                </li>
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-teal-400 rounded-full mr-4"></span>
+                  <span class="text-xl font-semibold text-teal-400">Runner-Up in Singer U-15 School Cricket Tournament - 2016</span>
+                </li>
+              </ul>
+            </div>
+          </Section>
+          <Section id="contact" title="Contact">
+            <div class="text-center max-w-lg mx-auto">
+              <p class="text-gray-300 mb-6 text-xl font-bold">
+                Interested in collaborating? Feel free to reach out!
+              </p>
+              <a
+                href="mailto:suyamagunaratne@gmail.com"
+                class="text-teal-400 hover:text-teal-300 text-lg font-semibold block mb-4"
+              >
+                suyamagunaratne@gmail.com
+              </a>
+              <a
+                class="text-teal-400 hover:text-teal-300 text-lg font-semibold block mb-4"
+              >
+                Contact Number: +94 76 4816 583
+              </a>
+              <div class="flex justify-center space-x-6 mb-6">
+                <a
+                  href="https://www.linkedin.com/in/suyama-gunaratne-7b088331b"
+                  class="text-teal-400 hover:text-teal-300 transition-colors text-2xl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <i class="fab fa-linkedin"></i>
+                </a>
+                <a
+                  href="https://github.com/SuyamaGunaratne"
+                  class="text-teal-400 hover:text-teal-300 transition-colors text-2xl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <i class="fab fa-github"></i>
+                </a>
+              </div>
+              <a
+                href="/resume.pdf"
+                download
+                class="inline-block bg-teal-500 hover:bg-teal-600 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300"
+              >
+                Download Resume
+              </a>
+            </div>
+          </Section>
+          <footer class="py-8 text-center bg-gray-900/50">
+            <p class="text-gray-300">© 2025 Suyama Gunaratne. All rights reserved.</p>
+          </footer>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
